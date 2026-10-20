@@ -1,4 +1,5 @@
 from consultas import buscar_expediente
+from lista import ordenar_expedientes
 nombres_lista = []
 dni_lista = []
 celular_lista = []
@@ -84,13 +85,18 @@ while True:
             print("-" * 30)
         input("\nPresione enter para ir al menu principal...")
 
+
     elif opcion == "3":
-        print("\n--- LISTA DE EXPEDIENTES ---")
-        if len(codigos_lista) == 0:
-            print("No hay expedientes registrados.")
-        else:
-            for i in range(len(codigos_lista) - 1, -1, -1):
-                print(f"[{codigos_lista[i]}] - {nombres_lista[i]} | Asunto: {asunto_lista[i]}")
+       ordenar_expedientes(
+        codigos_lista,
+        nombres_lista,
+        dni_lista,
+        celular_lista,
+        correo_lista,
+        asunto_lista
+    )
+       input("\nPresione enter para ir al menu principal...")
+       
             
     elif opcion == "4":
         print("Saliendo del programa...")
