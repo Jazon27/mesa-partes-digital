@@ -1,4 +1,4 @@
-
+from consultas import buscar_expediente
 nombres_lista = []
 dni_lista = []
 celular_lista = []
@@ -12,7 +12,7 @@ while True:
     print("\n[MENU PRINCIPAL]")
     print("1. Registrar expediente")
     print("2. Buscar expediente")
-    print("3. Ver y ordenar expedientes")
+    print("3. Ver expedientes guardados")
     print("4. Salir")
 
     opcion = input("Elige una opción (1-4): ")
@@ -24,14 +24,14 @@ while True:
         dni = input("DNI (8 dígitos): ")
         while len(dni) != 8 or not dni.isdigit():
             print("Error: El DNI debe tener exactamente 8 números.")
-            dni = input("Ingrese un DNI válido (8 dígitos): ")
+            dni = input("Ingrese un DNI valido (8 dígitos): ")
 
         celular = input("Celular (9 dígitos): ")
         while len(celular) != 9 or not celular.isdigit():
             print("Error: El celular debe tener exactamente 9 números.")
-            celular = input("Ingrese un celular válido (9 dígitos): ")
+            celular = input("Ingrese un celular valido (9 dígitos): ")
 
-        correo = input("Correo electrónico: ")
+        correo = input("Correo electronico: ")
         asunto = input("Asunto del trámite: ")
 
         codigo = "EXP-" + str(len(codigos_lista) + 1)
@@ -45,25 +45,44 @@ while True:
 
         print(f"¡Registrado con éxito! Tu código es: {codigo}")
 
+    
     elif opcion == "2":
-        print("\n--- BÚSQUEDA ---")
-        buscado = input("Ingresa el código a buscar (Ej: EXP-1): ")
+        print("\n------- Búsqueda de Expediente -------")
+        print("Ingrese el código del expediente o DNI:")
+        print("Código (EXP-1)")
+        print("DNI (71234567)")
 
-        encontrado = False
-        for i in range(len(codigos_lista)):
-            if codigos_lista[i] == buscado:
-                print("\n¡Expediente encontrado!")
-                print(f"Código: {codigos_lista[i]}")
-                print(f"Solicitante: {nombres_lista[i]}")
-                print(f"DNI: {dni_lista[i]}")
+        buscar = input("Buscar: ").strip()
+        encontrados = []
+        encontrados = buscar_expediente(
+            buscar,
+            codigos_lista,
+            nombres_lista,
+            dni_lista,
+            celular_lista,
+            correo_lista,
+            asunto_lista
+            )
+
+        if len(encontrados) == 0:
+            print("\nNo se encontro ningun expediente.")
+        else:
+            print(f"\nSe encontraron {len(encontrados)} expediente(s):")
+            print("-" * 30)
+
+            for i in encontrados:
+                print(f"Código:  {codigos_lista[i]}")
+                print(f"Nombre:  {nombres_lista[i]}")
+                print(f"DNI:     {dni_lista[i]}")
                 print(f"Celular: {celular_lista[i]}")
-                print(f"Correo: {correo_lista[i]}")
-                print(f"Asunto: {asunto_lista[i]}")
-                encontrado = True
-                break
+                print(f"Correo:  {correo_lista[i]}")
+                print(f"Asunto:  {asunto_lista[i]}")
 
-        if not encontrado:
-            print("No se encontró ningún expediente con ese código.")
+                if i != encontrados[-1]:
+                    print("-" * 30)
+
+            print("-" * 30)
+        input("\nPresione enter para ir al menu principal...")
 
     elif opcion == "3":
         print("\n--- LISTA DE EXPEDIENTES ---")
@@ -72,7 +91,7 @@ while True:
         else:
             for i in range(len(codigos_lista) - 1, -1, -1):
                 print(f"[{codigos_lista[i]}] - {nombres_lista[i]} | Asunto: {asunto_lista[i]}")
-
+            
     elif opcion == "4":
         print("Saliendo del programa...")
         break
