@@ -1,100 +1,73 @@
-from consultas import buscar_expediente
-nombres_lista = []
-dni_lista = []
-celular_lista = []
-correo_lista = []
-asunto_lista = []
-codigos_lista = []
+from Validaciones import validar_datos
+from datos import cargar_csv, guardar_csv
+from consultas import (
+    ordenar_lista_por_codigo,
+    busqueda_binaria,
+    mostrar_expedientes,
+    listar_descendente,
+    extraer_numero_codigo
+)
 
-print("MESA DE PARTES DIGITAL")
+archivo_datos = "expedientes.csv"
 
-while True:
-    print("\n[MENU PRINCIPAL]")
-    print("1. Registrar expediente")
-    print("2. Buscar expediente")
-    print("3. Ver expedientes guardados")
-    print("4. Salir")
+def siguiente_codigo(codigos):
+    if len(codigos)== 0 :
+        return "EXP-1"
+    mayor = extraer_numero_codigo(codigos[-1])
+    return f"EXP-{mayor + 1}"
 
-    opcion = input("Elige una opción (1-4): ")
+def registrar_expediente(codigos, nombres, dnis, celulares, correos, asuntos):
+    print("Registro de nuevo expediente")
+    while True :
+        nombre = input("Nombres y apellidos: ").strip()
+        dni = input("DNI (8 digitos):").strip()
+        celular = input("Celular (9 dígitos): ").strip()
+        correo = input("Correo electrónico: ").strip()
+        asunto = input("Asunto del trámite: ").strip()
+        if validar_datos(nombre, dni, celular, correo, asunto):
+            break
+        print("Por favor, ingrese datos validos")
 
-    if opcion == "1":
-        print("\n--- REGISTRO ---")
-        nombre = input("Nombres y apellidos: ")
+        codigo =siguiente_codigo(codigos)
+        codigos.append(codigo)
+        nombres.append(nombre)
+        dnis.append(dni)
+        celulares.append(celular)
+        correos.append(correo)
+        asuntos.append(asunto)
+        ordenar_lista_por_codigo(codigos, nombres, dnis, celulares, correos, asuntos)
+        guardar_csv(archivo_datos, codigos, nombres, dnis, celulares, correos, asuntos)
+        print(f"Expediente Registrado con Exito. Código asignado : {codigo}")
 
-        dni = input("DNI (8 dígitos): ")
-        while len(dni) != 8 or not dni.isdigit():
-            print("Error: El DNI debe tener exactamente 8 números.")
-            dni = input("Ingrese un DNI valido (8 dígitos): ")
 
-        celular = input("Celular (9 dígitos): ")
-        while len(celular) != 9 or not celular.isdigit():
-            print("Error: El celular debe tener exactamente 9 números.")
-            celular = input("Ingrese un celular valido (9 dígitos): ")
+def mostrar_menu():
+    print("   MESA DE PARTES DIGITAL - EL AGUSTINO")
+    print("1. Registro de nuevo expediente")
+    print("2. Mostrar expediente")
+    print("3. Ver expedientes ordenados (mayor a menor)")
+    print("4. salir y guardar cambios")
 
-        correo = input("Correo electronico: ")
-        asunto = input("Asunto del trámite: ")
-
-        codigo = "EXP-" + str(len(codigos_lista) + 1)
-
-        nombres_lista.append(nombre)
-        dni_lista.append(dni)
-        celular_lista.append(celular)
-        correo_lista.append(correo)
-        asunto_lista.append(asunto)
-        codigos_lista.append(codigo)
-
-        print(f"¡Registrado con éxito! Tu código es: {codigo}")
-
+def main():
+    codigos, nombres, dnis, celulares, correos, asuntos = cargar_csv(archivo_datos)
+    ordenar_lista_por_codigo(codigos, nombres, dnis, celulares, correos, asuntos)
+    while True:
+        mostrar_menu()
+        opcion = input("seleccione una opción: ").strip()
+        if opcion == "1":
+            registrar_expediente(codigos, nombres, dnis, celulares, correos, asuntos)
+        elif opcion == "2":
+            buscado = input("Ingrese el código del expediente").strip()
+            pos = busqueda_binaria(codigos, buscado)
+            if pos != -1:
+                mostrar_expedientes(pos,codigos, nombres, dnis, celulares, correos, asuntos, pos)
+            else:
+                print("Expediente no encontrado.")
+        elif opcion == "3":
+            listar_descendente(codigos, nombres, dnis, celulares, correos, asuntos)
+        elif opcion =="4":
+            guardar_csv(archivo_datos, codigos, nombres, dnis, celulares, correos, asuntos)
+            print("Cambios guardados. Muchas gracias.")
+            break
+        else:
+            print("Opción inválida. Intente nuevamente.")
     
-    elif opcion == "2":
-        print("\n------- Búsqueda de Expediente -------")
-        print("Ingrese el código del expediente o DNI:")
-        print("Código (EXP-1)")
-        print("DNI (71234567)")
-
-        buscar = input("Buscar: ").strip()
-        encontrados = []
-        encontrados = buscar_expediente(
-            buscar,
-            codigos_lista,
-            nombres_lista,
-            dni_lista,
-            celular_lista,
-            correo_lista,
-            asunto_lista
-            )
-
-        if len(encontrados) == 0:
-            print("\nNo se encontro ningun expediente.")
-        else:
-            print(f"\nSe encontraron {len(encontrados)} expediente(s):")
-            print("-" * 30)
-
-            for i in encontrados:
-                print(f"Código:  {codigos_lista[i]}")
-                print(f"Nombre:  {nombres_lista[i]}")
-                print(f"DNI:     {dni_lista[i]}")
-                print(f"Celular: {celular_lista[i]}")
-                print(f"Correo:  {correo_lista[i]}")
-                print(f"Asunto:  {asunto_lista[i]}")
-
-                if i != encontrados[-1]:
-                    print("-" * 30)
-
-            print("-" * 30)
-        input("\nPresione enter para ir al menu principal...")
-
-    elif opcion == "3":
-        print("\n--- LISTA DE EXPEDIENTES ---")
-        if len(codigos_lista) == 0:
-            print("No hay expedientes registrados.")
-        else:
-            for i in range(len(codigos_lista) - 1, -1, -1):
-                print(f"[{codigos_lista[i]}] - {nombres_lista[i]} | Asunto: {asunto_lista[i]}")
-            
-    elif opcion == "4":
-        print("Saliendo del programa...")
-        break
-
-    else:
-        print("Opción inválida. Intenta del 1 al 4.")
