@@ -23,7 +23,7 @@ def siguiente_codigo(codigos):
 
 def registrar_expediente(codigos, nombres, dnis, celulares, correos, asuntos):
     print("Registro de nuevo expediente")
-while True:
+    while True:
         nombre = input("Nombres y apellidos: ").strip()
         if validar_texto_obligatorio(nombre):
             break
