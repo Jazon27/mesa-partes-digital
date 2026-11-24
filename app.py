@@ -24,9 +24,10 @@ def registrar_expediente(codigos, nombres, dnis, celulares, correos, asuntos):
         celular = input("Celular (9 dígitos): ").strip()
         correo = input("Correo electrónico: ").strip()
         asunto = input("Asunto del trámite: ").strip()
-        if validar_datos(nombre, dni, celular, correo, asunto):
+        es_valido, mensaje = validar_datos(nombre, dni, celular, correo, asunto)
+        if es_valido:
             break
-        print("Por favor, ingrese datos validos")
+        print(f"Error: {mensaje}")
 
         codigo =siguiente_codigo(codigos)
         codigos.append(codigo)
