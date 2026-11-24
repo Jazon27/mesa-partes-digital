@@ -1,17 +1,23 @@
-def buscar_expediente(buscar, codigos_lista, nombres_lista, dni_lista, celular_lista, correo_lista, asunto_lista):
-    encontrados = []
-    
-    es_codigo_valido = buscar.upper().startswith("EXP-") and len(buscar) != 4 and len(buscar) > 4
+def buscar_expediente(
+    buscar,
+    codigos_lista,
+    nombres_lista,
+    dni_lista,
+    celular_lista,
+    correo_lista,
+    asunto_lista,
+):
+    buscar_upper = buscar.upper()
+    es_codigo_valido = buscar_upper.startswith("EXP-") and len(buscar) > 4
     es_dni_valido = len(buscar) == 8 and buscar.isdigit()
 
-    if not es_codigo_valido and not es_dni_valido:
-        if buscar.isdigit() and len(buscar) != 8:
+    if not (es_codigo_valido or es_dni_valido):
+        if buscar.isdigit():
             print("\nEl DNI debe tener 8 dígitos.")
-        return encontrados
-    
-    for i in range(len(codigos_lista)):
-        codigo_igual = buscar.upper() == codigos_lista[i].upper()
-        dni_igual = buscar == dni_lista[i]
-        if codigo_igual or dni_igual:
-            encontrados.append(i)
-    return encontrados
+        return []
+
+    return [
+        i
+        for i, codigo in enumerate(codigos_lista)
+        if buscar_upper == codigo.upper() or buscar == dni_lista[i]
+    ]
