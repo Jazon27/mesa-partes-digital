@@ -1,4 +1,4 @@
-from Validaciones import validar_datos
+from validaciones import validar_datos
 from datos import cargar_csv, guardar_csv
 from consultas import (
     ordenar_lista_por_codigo,
@@ -36,6 +36,7 @@ def registrar_expediente(codigos, nombres, dnis, celulares, correos, asuntos):
         celulares.append(celular)
         correos.append(correo)
         asuntos.append(asunto)
+
         ordenar_lista_por_codigo(codigos, nombres, dnis, celulares, correos, asuntos)
         guardar_csv(archivo_datos, codigos, nombres, dnis, celulares, correos, asuntos)
         print(f"Expediente Registrado con Exito. Código asignado : {codigo}")
@@ -54,6 +55,7 @@ def main():
     while True:
         mostrar_menu()
         opcion = input("seleccione una opción: ").strip()
+
         if opcion == "1":
             registrar_expediente(codigos, nombres, dnis, celulares, correos, asuntos)
         elif opcion == "2":
@@ -73,4 +75,4 @@ def main():
             print("Opción inválida. Intente nuevamente.")
             
     if __name__ == "__main__":
-    main()
+        main()
